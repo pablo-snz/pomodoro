@@ -14,8 +14,8 @@ func NewClient(d *daemon.Daemon) *Client {
 	}
 }
 
-func (c *Client) StartDaemon() {
-	c.daemon.Start()
+func (c *Client) StartDaemon(workTime, breakTime float64) {
+	c.daemon.Start(workTime, breakTime)
 }
 
 func (c *Client) StopDaemon() {

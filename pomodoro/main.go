@@ -10,8 +10,8 @@ import (
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "My Daemon Control"
-	app.Usage = "Control my daemon"
+	app.Name = "Pomodoro"
+	app.Usage = "Pomodoro daemon & client"
 	app.Version = "1.0.0"
 
 	daemonInstance := daemon.NewDaemon()
@@ -21,8 +21,26 @@ func main() {
 		{
 			Name:  "start",
 			Usage: "Start the daemon",
+			Flags: []cli.Flag{
+				cli.Float64Flag{
+					Name:  "work, w",
+					Usage: "Set work time in minutes (decimals allowed)",
+				},
+				cli.Float64Flag{
+					Name:  "break, b",
+					Usage: "Set break time in minutes (decimals allowed)",
+				},
+			},
 			Action: func(c *cli.Context) error {
-				clientInstance.StartDaemon()
+				workTime := c.Float64("work")
+				breakTime := c.Float64("break")
+
+				if workTime <= 0 || breakTime <= 0 {
+					fmt.Println("Work and break times must be greater than 0")
+					return nil
+				}
+
+				clientInstance.StartDaemon(workTime, breakTime)
 				return nil
 			},
 		},

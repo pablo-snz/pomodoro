@@ -5,9 +5,9 @@ import (
 	"github.com/sevlyar/go-daemon"
 	"os"
 	"os/exec"
-	"time"
 	"strconv"
 	"syscall"
+	"time"
 )
 
 type Daemon struct {
@@ -20,7 +20,7 @@ func NewDaemon() *Daemon {
 	}
 }
 
-func (d *Daemon) Start() {
+func (d *Daemon) Start(workTime, breakTime float64) {
 	cntxt := &daemon.Context{
 		PidFileName: d.PIDFile,
 		PidFilePerm: 0644,
@@ -41,14 +41,32 @@ func (d *Daemon) Start() {
 	}
 	defer cntxt.Release()
 
-	ticker := time.NewTicker(time.Minute)
-	for range ticker.C {
-		cmd := exec.Command("notify-send", "basic daemon", "basic daemon working")
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
-		if err := cmd.Run(); err != nil {
-			fmt.Println("Error executing notify-send:", err)
-		}
+	d.runPomodoro(workTime, breakTime)
+}
+
+func (d *Daemon) runPomodoro(workTime, breakTime float64) {
+	
+	workTimeSeconds := workTime * 60
+	breakTimeSeconds := breakTime * 60
+
+	for {
+
+		d.notify("Pomodoro", "Work Time has started")
+
+		time.Sleep(time.Duration(workTimeSeconds) * time.Second)
+
+		d.notify("Pomodoro", "Break Time has started")
+
+		time.Sleep(time.Duration(breakTimeSeconds) * time.Second)
+	}
+}
+
+func (d *Daemon) notify(title, message string) {
+	cmd := exec.Command("notify-send", title, message)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
+		fmt.Println("Error executing notify-send:", err)
 	}
 }
 
