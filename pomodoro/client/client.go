@@ -1,8 +1,7 @@
 package client
 
 import (
-	"fmt"
-	"src/daemon"
+	"pomodoro/daemon"
 )
 
 type Client struct {

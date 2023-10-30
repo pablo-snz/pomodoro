@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/urfave/cli"
 	"os"
-	"src/client"
-	"src/daemon"
+	"pomodoro/client"
+	"pomodoro/daemon"
 )
 
 func main() {

@@ -6,6 +6,8 @@ import (
 	"os"
 	"os/exec"
 	"time"
+	"strconv"
+	"syscall"
 )
 
 type Daemon struct {
