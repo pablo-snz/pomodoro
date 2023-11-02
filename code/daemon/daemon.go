@@ -21,7 +21,7 @@ func NewDaemon(pomodoroStates []pomodoro.PomodoroStates) *Daemon {
 	}
 }
 
-func (d *Daemon) Start(workTime, breakTime float64) {
+func (d *Daemon) Start() {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		fmt.Println("Error:", err)
