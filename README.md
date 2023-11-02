@@ -44,5 +44,5 @@ To stop the daemon, use the following command:
 
 ### Development Status
 
-Pomodoro Daemon is currently under development and may have some limitations or missing features. We welcome contributions 
+Pomodoro Daemon is currently under development and may have some limitations or missing features. 
 
