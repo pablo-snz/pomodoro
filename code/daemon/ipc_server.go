@@ -29,7 +29,7 @@ func NewPomodoroIPCServer(pomodoroStates []pomodoro.PomodoroStates) *PomodoroIPC
 func (s *PomodoroIPCServer) Start() {
 
 	listenPath := "/tmp/pomodoro.sock"
-	os.Remove(listenPath) 
+	os.Remove(listenPath)
 
 	l, err := net.Listen("unix", listenPath)
 	if err != nil {
@@ -47,7 +47,7 @@ func (s *PomodoroIPCServer) Start() {
 
 	go func() {
 		<-sigCh
-		s.cancel() 
+		s.cancel()
 		l.Close()
 	}()
 
@@ -79,9 +79,8 @@ func (s *PomodoroIPCServer) handleConnection(conn net.Conn) {
 	case "stop":
 		conn.Write([]byte("Deteniendo el servidor"))
 		conn.Close()
-		os.Exit(0) 
+		os.Exit(0)
 	default:
 		conn.Write([]byte("Comando no válido"))
 	}
 }
-

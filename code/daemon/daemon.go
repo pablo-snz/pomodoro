@@ -13,7 +13,7 @@ type Daemon struct {
 }
 
 func NewDaemon(pomodoroStates []pomodoro.PomodoroStates) *Daemon {
-	
+
 	server := NewPomodoroIPCServer(pomodoroStates)
 
 	return &Daemon{
@@ -59,5 +59,3 @@ func (d *Daemon) Start(workTime, breakTime float64) {
 
 	d.server.Start()
 }
-
-
