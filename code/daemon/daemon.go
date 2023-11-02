@@ -38,9 +38,9 @@ func (d *Daemon) Start() {
 	}
 
 	cntxt := &daemon.Context{
-		PidFileName: "pomodoro.pid",
+		PidFileName: pomodoroDir + "pomodoro.pid",
 		PidFilePerm: 0644,
-		LogFileName: "pomodoro.log",
+		LogFileName: pomodoroDir + "pomodoro.log",
 		LogFilePerm: 0640,
 		WorkDir:     pomodoroDir,
 		Umask:       027,

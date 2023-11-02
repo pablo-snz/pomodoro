@@ -1,12 +1,14 @@
 package daemon
 
 import (
+	"bytes"
 	"code/pomodoro"
 	"context"
 	"fmt"
 	"net"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 )
 
@@ -71,7 +73,8 @@ func (s *PomodoroIPCServer) handleConnection(conn net.Conn) {
 		return
 	}
 
-	request := string(buf)
+	request := strings.TrimSpace(string(bytes.Trim(buf, "\x00")))
+
 	switch request {
 	case "status":
 		status := s.pomodoro.GetStatus()

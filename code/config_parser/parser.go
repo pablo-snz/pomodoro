@@ -31,6 +31,11 @@ func GetPomodoroStates() ([]pomodoro.PomodoroStates, error) {
 			if err != nil {
 				return nil, err
 			}
+			// creates empty yaml file
+			_, err = os.Create(configFilePath)
+			if err != nil {
+				return nil, err
+			}
 		}
 		pomodoroConfig = []pomodoro.PomodoroStates{
 			{Order: 0, State: "work", Time: 25},
@@ -69,6 +74,10 @@ func writePomodoroConfig(filename string, pomodoroConfig []pomodoro.PomodoroStat
 	var config map[string]interface{}
 	if err := yaml.Unmarshal(data, &config); err != nil {
 		return err
+	}
+
+	if config == nil {
+		config = make(map[string]interface{})
 	}
 
 	config["pomodoro"] = pomodoroConfig
