@@ -1,48 +1,90 @@
-# pomodoro
+# pomodoro-daemon
 
-This project is a productivity tool designed for Linux users who work with tiling window managers such as `i3wm` and `sway`. It's intended to help you manage your work and break times using the Pomodoro technique, a time management method that breaks work into intervals of focused work followed by short breaks.
+pomodoro-daemon is a timer daemon designed for Unix-based systems, allowing you to effectively manage your time using the Pomodoro Technique. This daemon runs in the background, enabling you to concentrate on your tasks and take well-timed breaks.
 
-**Under Development**
+## Features:
+- Custom pomodoro timer: Start and manage Pomodoro timers with customized settings. 
+- Sound notification: using [oto](https://github.com/ebitengine/oto) and [beep](https://github.com/gopxl/beep) you can configure sound notifications to accompany your Pomodoro sessions.
+- Monitor the current Pomodoro timer status and make on-the-fly adjustments to your Pomodoro settings.
 
-## Features
+## Install:
 
-- It serves as a daemon for managing your work and break sessions.
-- Easily customizable work and break times.
-- Designed for Linux users working with tiling window managers
+pomodoro-daemon is tailored for Unix-based systems and relies on the presence of notify-send for notifications. Ensure you have Go version 1.21 or higher installed.
 
-## Installation
+1. Clone the repository:
 
-Before compiling and using Pomodoro Daemon, make sure you have the necessary dependencies and Go environment set up.
-
-1. Build the project using the following command:
-
-```bash
-go build -o pomodoro main.go
+```{bash}
+git clone https://github.com/pablo-snz/pomodoro-daemon.git
+cd pomodoro-daemon
 ```
 
-You're now ready to use Pomodoro Daemon.
+2. Build the executable
+
+```{bash}
+make build
+```
+
+3. (OPTIONAL) move the executable to PATH:
+
+```{bash}
+make install
+make clean
+```
+
+## Uninstall:
+
+To remove the binary from your PATH, you can execute:
+
+```{bash}
+make uninstall
+```
+
+Additionally, pomodoro-daemon creates a .pomodoro folder in your home directory. You can delete it with:
+
+```{bash}
+rm -r $HOME/.pomodoro/
+```
 
 ## Usage
 
-### Starting Daemon
+pomodoro-daemon offers versatile Pomodoro timer functionality. You can define as many states in the format **state:time** as you wish. You can do this in the configuration file `$HOME/.pomodoro/config.yml` as shown below:
 
-To start the daemon, use the following command:
+```{yaml}
+pomodoro:
+- order: 0
+  state: work
+  time: 30
+- order: 1
+  state: rest
+  time: 5
+- order: 2
+  state: Look-Away
+  time: 5
+# ...
+```
+Alternatively, you can define these states on-the-fly using the `pomodoro start` command:
 
-```{bash}
-./pomodoro start --work [work_minutes] --break [break_minutes]
+```{yaml}
+pomodoro start "work:25 break:5 ..."
 ```
 
-Replace `[work_minutes]` with the duration of your work interval in minutes and `[break_minutes]` with the duration of your break interval in minutes.
+- `start`: Start the Pomodoro timer with custom/default settings.
+    - Flags:
+        - `-s, --sound`: Play a sound when the timer starts.
 
-### Stopping the Daemon
+- `status`: Get the Pomodoro timer's current status and time remaining.
 
-To stop the daemon, use the following command:
+- `stop`: Gracefully stop the Pomodoro timer.
 
-```{bash}
-./pomodoro stop
-```
+- `set`: Change the pomodoro current status with another:
 
-### Development Status
+    ```{bash}
+    pomodoro set Look-Away
+    ```
 
-Pomodoro Daemon is currently under development and may have some limitations or missing features. 
+## Limitations
+
+- Currently, pomodoro-daemon is designed for Unix-based systems due to its use of Unix socket communication (IPC).
+- The manager for notifications relies on notify-send, which should be installed and properly configured to display notifications.
+- Only one pomodoro at a time. (working on it)
 
