@@ -36,6 +36,10 @@ func NewPomodoroIPCServer(pomodoroStates []pomodoro.PomodoroStates) *PomodoroIPC
 	}
 }
 
+func (s *PomodoroIPCServer) startPomodoro() {
+	go s.pomodoro.Start(s.ctx)
+}
+
 func (s *PomodoroIPCServer) Start() {
 
 	listenPath := "/tmp/pomodoro.sock"
@@ -48,7 +52,7 @@ func (s *PomodoroIPCServer) Start() {
 	}
 	defer l.Close()
 
-	go s.pomodoro.Start(s.ctx)
+	s.startPomodoro()
 
 	fmt.Println("Servidor IPC Pomodoro iniciado")
 
@@ -109,6 +113,47 @@ func (s *PomodoroIPCServer) handleConnection(conn net.Conn) {
 		conn.Close()
 		os.Exit(0)
 	default:
-		conn.Write([]byte("Comando no válido"))
+		states := s.pomodoro.GetStates()
+
+		order, found := getOrderForState(states, request)
+		if !found {
+			conn.Write([]byte("Comando no válido"))
+			return
+		}
+
+		newStates := make([]pomodoro.PomodoroStates, len(states))
+		newStates[0] = pomodoro.PomodoroStates{
+			State: request,
+			Time:  states[order].Time,
+			Order: 0,
+		}
+
+		for i := 1; i < len(states); i++ {
+			newOrder := (i + order) % len(states)
+			newStates[i] = pomodoro.PomodoroStates{
+				State: states[newOrder].State,
+				Time:  states[newOrder].Time,
+				Order: i,
+			}
+		}
+
+		s.cancel()
+		ctx, cancel := context.WithCancel(context.Background())
+		pom := pomodoro.NewPomodoro(newStates)
+		s.cancel = cancel
+		s.ctx = ctx
+		s.pomodoro = pom
+		s.startPomodoro()
+		
+		conn.Write([]byte("Pomodoro reiniciado, estado actual: " + request))
 	}
+}
+
+func getOrderForState(states []pomodoro.PomodoroStates, targetState string) (int, bool) {
+	for _, state := range states {
+		if state.State == targetState {
+			return state.Order, true
+		}
+	}
+	return 0, false 
 }

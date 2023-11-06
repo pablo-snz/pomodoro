@@ -10,9 +10,10 @@ import (
 )
 
 var startCmd = &cobra.Command{
-	Use:   "start",
-	Short: "Start the Pomodoro timer",
-	Args:  cobra.MaximumNArgs(1),
+	Use:     "start [\"STATE:TIME STATE:TIME ...\"]",
+	Short:   "Start the Pomodoro timer",
+	Example: "start \"work:25 break:5\"",
+	Args:    cobra.MaximumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		var pomodoro_states []pomodoro.PomodoroStates
 		var err error
@@ -87,11 +88,31 @@ var statusCmd = &cobra.Command{
 	},
 }
 
+var setCmd = &cobra.Command{
+	Use:   "set [STATUS]",
+	Short: "Set the Pomodoro timer status",
+	Args:  cobra.ExactArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+		client, err := client.NewPomodoroIPCClient()
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		response, err := client.SendCommand(args[0])
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		fmt.Println(response)
+	},
+}
+
 func main() {
 	var rootCmd = &cobra.Command{Use: "pomodoro"}
 	rootCmd.AddCommand(startCmd)
 	rootCmd.AddCommand(stopCmd)
 	rootCmd.AddCommand(statusCmd)
+	rootCmd.AddCommand(setCmd)
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
