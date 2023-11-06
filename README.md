@@ -1,6 +1,6 @@
 # pomodoro-daemon
 
-pomodoro-daemon is a timer daemon designed for Unix-based systems, allowing you to effectively manage your time using the Pomodoro Technique. This daemon runs in the background, enabling you to concentrate on your tasks and take well-timed breaks.
+pomodoro-daemon is a timer daemon designed for Unix-based systems, allowing you to effectively manage your time using the Pomodoro Technique. This daemon runs in the background, enabling you to concentrate on your tasks. 
 
 ## Features:
 - Custom pomodoro timer: Start and manage Pomodoro timers with customized settings. 
