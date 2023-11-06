@@ -13,9 +13,11 @@ type PomodoroStates struct {
 }
 
 type Pomodoro struct {
-	states   []PomodoroStates
-	notifier *Notifier
-	status   string
+	states      []PomodoroStates
+	notifier    *Notifier
+	status      string
+	currentTime time.Time
+	time        float64
 }
 
 func NewPomodoro(pomodoroStates []PomodoroStates) *Pomodoro {
@@ -42,12 +44,18 @@ func (p *Pomodoro) Start(ctx context.Context) {
 		default:
 			state := p.states[idx]
 			p.status = state.State
+			p.time = state.Time
 			p.notifier.notify(state.Order, p.status)
+
+			stateDuration := time.Duration(state.Time*60) * time.Second
+			timer := time.NewTimer(stateDuration)
+			p.currentTime = time.Now().Add(stateDuration)
 
 			select {
 			case <-ctx.Done():
 				return
-			case <-time.After(time.Duration(state.Time*60) * time.Second):
+			case <-timer.C:
+				timer.Stop()
 			}
 
 			idx++
@@ -56,6 +64,14 @@ func (p *Pomodoro) Start(ctx context.Context) {
 			}
 		}
 	}
+}
+
+func (p *Pomodoro) GetTime() (int, int) {
+	duration := p.currentTime.Sub(time.Now())
+	minutes := int(duration.Minutes())
+	seconds := int(duration.Seconds()) - (minutes * 60)
+
+	return minutes, seconds
 }
 
 func (p *Pomodoro) GetStatus() string {

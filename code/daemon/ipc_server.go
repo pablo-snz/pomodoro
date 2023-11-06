@@ -16,6 +16,8 @@ import (
 type PomodoroStatusResponse struct {
 	Current string
 	States  []pomodoro.PomodoroStates
+	Minutes int
+	Seconds int
 }
 
 type PomodoroIPCServer struct {
@@ -85,10 +87,13 @@ func (s *PomodoroIPCServer) handleConnection(conn net.Conn) {
 	case "status":
 		status := s.pomodoro.GetStatus()
 		states := s.pomodoro.GetStates()
+		minutes, seconds := s.pomodoro.GetTime()
 
 		response := PomodoroStatusResponse{
 			Current: status,
 			States:  states,
+			Minutes: minutes,
+			Seconds: seconds,
 		}
 
 		responseJSON, err := json.Marshal(response)

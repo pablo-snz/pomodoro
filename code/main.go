@@ -77,12 +77,13 @@ var statusCmd = &cobra.Command{
 		for _, status := range response.States {
 			output = fmt.Sprintf("State: %v, Time: %v", status.State, status.Time)
 			if status.State == response.Current {
-				output += " <- Current state\n"
-			}else {
+				output += fmt.Sprintf(" <- Current: %d min %d sec remaining\n", response.Minutes, response.Seconds)
+			} else {
 				output += "\n"
 			}
 			fmt.Print(output)
 		}
+
 	},
 }
 

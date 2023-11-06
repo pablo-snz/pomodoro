@@ -10,6 +10,8 @@ import (
 type PomodoroStatus struct {
 	Current string
 	States  []pomodoro.PomodoroStates
+	Minutes int
+	Seconds int
 }
 
 type PomodoroIPCClient struct {
