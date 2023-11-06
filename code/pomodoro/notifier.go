@@ -13,12 +13,14 @@ import (
 )
 
 type Notifier struct {
+	sound  bool
 	script string
 	title  string
 }
 
-func NewNotifier() *Notifier {
+func NewNotifier(sound bool) *Notifier {
 	return &Notifier{
+		sound:  sound,
 		script: "notify-send",
 		title:  "Pomodoro",
 	}
@@ -30,7 +32,9 @@ func (n *Notifier) notify(order int, status string) {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
-	n.playSound()
+	if n.sound {
+		n.playSound()
+	}
 	if err := cmd.Run(); err != nil {
 		fmt.Println("Error executing notify-send:", err)
 	}

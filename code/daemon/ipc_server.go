@@ -21,15 +21,17 @@ type PomodoroStatusResponse struct {
 }
 
 type PomodoroIPCServer struct {
+	sound    bool
 	pomodoro *pomodoro.Pomodoro
 	ctx      context.Context
 	cancel   context.CancelFunc
 }
 
-func NewPomodoroIPCServer(pomodoroStates []pomodoro.PomodoroStates) *PomodoroIPCServer {
+func NewPomodoroIPCServer(pomodoroStates []pomodoro.PomodoroStates, sound bool) *PomodoroIPCServer {
 	ctx, cancel := context.WithCancel(context.Background())
-	pom := pomodoro.NewPomodoro(pomodoroStates)
+	pom := pomodoro.NewPomodoro(pomodoroStates, sound)
 	return &PomodoroIPCServer{
+		sound:    sound,
 		pomodoro: pom,
 		ctx:      ctx,
 		cancel:   cancel,
@@ -139,7 +141,7 @@ func (s *PomodoroIPCServer) handleConnection(conn net.Conn) {
 
 		s.cancel()
 		ctx, cancel := context.WithCancel(context.Background())
-		pom := pomodoro.NewPomodoro(newStates)
+		pom := pomodoro.NewPomodoro(newStates, s.sound)
 		s.cancel = cancel
 		s.ctx = ctx
 		s.pomodoro = pom
