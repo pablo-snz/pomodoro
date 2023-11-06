@@ -4,7 +4,9 @@ INSTALL_DIR = /bin
 build:
 	cd code && go build -o $(PROGRAM_NAME) main.go
 
-install: build
+install: build	
+	mkdir -p $(HOME)/.pomodoro/assets/
+	cp -r assets/* $(HOME)/.pomodoro/assets/
 	cd code && sudo mv $(PROGRAM_NAME) $(INSTALL_DIR)
 
 clean:
