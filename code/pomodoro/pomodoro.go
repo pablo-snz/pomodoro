@@ -45,7 +45,7 @@ func (p *Pomodoro) Start(ctx context.Context) {
 			state := p.states[idx]
 			p.status = state.State
 			p.time = state.Time
-			p.notifier.notify(state.Order, p.status)
+			go p.notifier.notify(state.Order, p.status)
 
 			stateDuration := time.Duration(state.Time*60) * time.Second
 			timer := time.NewTimer(stateDuration)

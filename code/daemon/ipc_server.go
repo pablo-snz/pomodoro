@@ -144,7 +144,7 @@ func (s *PomodoroIPCServer) handleConnection(conn net.Conn) {
 		s.ctx = ctx
 		s.pomodoro = pom
 		s.startPomodoro()
-		
+
 		conn.Write([]byte("Pomodoro reiniciado, estado actual: " + request))
 	}
 }
@@ -155,5 +155,5 @@ func getOrderForState(states []pomodoro.PomodoroStates, targetState string) (int
 			return state.Order, true
 		}
 	}
-	return 0, false 
+	return 0, false
 }
