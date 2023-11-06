@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"code/pomodoro"
 	"context"
+	"encoding/json"
 	"fmt"
 	"net"
 	"os"
@@ -11,6 +12,11 @@ import (
 	"strings"
 	"syscall"
 )
+
+type PomodoroStatusResponse struct {
+	Current string
+	States  []pomodoro.PomodoroStates
+}
 
 type PomodoroIPCServer struct {
 	pomodoro *pomodoro.Pomodoro
@@ -78,7 +84,21 @@ func (s *PomodoroIPCServer) handleConnection(conn net.Conn) {
 	switch request {
 	case "status":
 		status := s.pomodoro.GetStatus()
-		conn.Write([]byte(status))
+		states := s.pomodoro.GetStates()
+
+		response := PomodoroStatusResponse{
+			Current: status,
+			States:  states,
+		}
+
+		responseJSON, err := json.Marshal(response)
+		if err != nil {
+			fmt.Printf("Error al serializar la respuesta: %v\n", err)
+			return
+		}
+
+		conn.Write(responseJSON)
+
 	case "stop":
 		conn.Write([]byte("Deteniendo el servidor"))
 		conn.Close()

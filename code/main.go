@@ -18,19 +18,24 @@ var startCmd = &cobra.Command{
 		var err error
 
 		if len(args) == 0 {
-			fmt.Println("Starting the Pomodoro timer with default settings...")
 			pomodoro_states, err = config_parser.GetPomodoroStates()
+			fmt.Println("Starting the Pomodoro timer with default settings:")
 		} else {
 			arg := args[0]
-			fmt.Printf("Starting the Pomodoro timer with custom settings: %v\n", arg)
 			pomodoro_states, err = config_parser.Parse(arg)
+			fmt.Println("Starting the Pomodoro timer with custom settings:")
 		}
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
+
 		d := daemon.NewDaemon(pomodoro_states)
 		d.Start()
+
+		for _, state := range pomodoro_states {
+			fmt.Printf("%v: %v min\n", state.State, state.Time)
+		}
 
 	},
 }
@@ -39,7 +44,6 @@ var stopCmd = &cobra.Command{
 	Use:   "stop",
 	Short: "Stop the Pomodoro timer",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Stopping the Pomodoro timer...")
 		client, err := client.NewPomodoroIPCClient()
 		if err != nil {
 			fmt.Println(err)
@@ -58,18 +62,25 @@ var statusCmd = &cobra.Command{
 	Use:   "status",
 	Short: "Get the Pomodoro timer status",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Getting the Pomodoro timer status...")
 		client, err := client.NewPomodoroIPCClient()
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
-		response, err := client.SendCommand("status")
+		response, err := client.SendQuery("status")
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
-		fmt.Println("Status: ", response)
+		var output string
+
+		for _, status := range response.States {
+			output = fmt.Sprintf("State: %v, Time: %v\n", status.State, status.Time)
+			if status.State == response.Current {
+				output = fmt.Sprintf("%v <-- Current", output)
+			}
+			fmt.Print(output)
+		}
 	},
 }
 
