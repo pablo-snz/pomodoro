@@ -4,7 +4,7 @@ pomodoro-daemon is a timer daemon designed for Unix-based systems, allowing you 
 
 ## Features:
 - Custom pomodoro timer: Start and manage Pomodoro timers with customized settings. 
-- Sound notification: using [oto](https://github.com/ebitengine/oto) and [beep](https://github.com/gopxl/beep) you can configure sound notifications to accompany your Pomodoro sessions.
+- Sound notification: using [beep](https://github.com/gopxl/beep) you can configure sound notifications to accompany your Pomodoro sessions.
 - Monitor the current Pomodoro timer status and make on-the-fly adjustments to your Pomodoro settings.
 
 ## Install:
