@@ -10,6 +10,8 @@ import (
 )
 
 var sound bool
+var message bool
+
 var startCmd = &cobra.Command{
 	Use:     "start [\"STATE:TIME STATE:TIME ...\"]",
 	Short:   "Start the Pomodoro timer",
@@ -32,7 +34,7 @@ var startCmd = &cobra.Command{
 			return
 		}
 
-		d := daemon.NewDaemon(pomodoro_states, sound)
+		d := daemon.NewDaemon(pomodoro_states, sound, !message)
 		d.Start()
 
 		for _, state := range pomodoro_states {
@@ -111,6 +113,7 @@ var setCmd = &cobra.Command{
 func main() {
 	var rootCmd = &cobra.Command{Use: "pomodoro"}
 	startCmd.Flags().BoolVarP(&sound, "sound", "s", false, "Play a sound when the timer starts")
+	startCmd.Flags().BoolVarP(&message, "disable-message", "d", false, "Disable show a message when the timer starts")
 	rootCmd.AddCommand(startCmd)
 	rootCmd.AddCommand(stopCmd)
 	rootCmd.AddCommand(statusCmd)

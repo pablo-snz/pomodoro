@@ -12,9 +12,9 @@ type Daemon struct {
 	server *PomodoroIPCServer
 }
 
-func NewDaemon(pomodoroStates []pomodoro.PomodoroStates, sound bool) *Daemon {
+func NewDaemon(pomodoroStates []pomodoro.PomodoroStates, sound bool, message bool) *Daemon {
 
-	server := NewPomodoroIPCServer(pomodoroStates, sound)
+	server := NewPomodoroIPCServer(pomodoroStates, sound, message)
 
 	return &Daemon{
 		server: server,

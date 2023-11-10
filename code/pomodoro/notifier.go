@@ -13,31 +13,35 @@ import (
 )
 
 type Notifier struct {
-	sound  bool
-	script string
-	title  string
+	message bool
+	sound   bool
+	script  string
+	title   string
 }
 
-func NewNotifier(sound bool) *Notifier {
+func NewNotifier(sound bool, message bool) *Notifier {
 	return &Notifier{
-		sound:  sound,
-		script: "notify-send",
-		title:  "Pomodoro",
+		message: message,
+		sound:   sound,
+		script:  "notify-send",
+		title:   "Pomodoro",
 	}
 }
 
 func (n *Notifier) notify(order int, status string) {
-	message := fmt.Sprintf("%s Time has started", status)
-	cmd := exec.Command(n.script, n.title, message)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-
+	if n.message {
+		message := fmt.Sprintf("%s Time has started", status)
+		cmd := exec.Command(n.script, n.title, message)
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		if err := cmd.Run(); err != nil {
+			fmt.Println("Error executing notify-send:", err)
+		}
+	}
 	if n.sound {
 		n.playSound()
 	}
-	if err := cmd.Run(); err != nil {
-		fmt.Println("Error executing notify-send:", err)
-	}
+
 }
 
 func (n *Notifier) playSound() {

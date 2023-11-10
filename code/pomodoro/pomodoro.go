@@ -20,14 +20,14 @@ type Pomodoro struct {
 	time        float64
 }
 
-func NewPomodoro(pomodoroStates []PomodoroStates, sound bool) *Pomodoro {
+func NewPomodoro(pomodoroStates []PomodoroStates, sound bool, message bool) *Pomodoro {
 
 	sort.Slice(pomodoroStates, func(i, j int) bool {
 		return pomodoroStates[i].Order < pomodoroStates[j].Order
 	})
 
 	return &Pomodoro{
-		notifier: NewNotifier(sound),
+		notifier: NewNotifier(sound, message),
 		states:   pomodoroStates,
 	}
 }
