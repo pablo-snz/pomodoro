@@ -1,6 +1,7 @@
 package main
 
 import (
+	"code/ascii"
 	"code/client"
 	"code/config_parser"
 	"code/daemon"
@@ -11,6 +12,7 @@ import (
 
 var sound bool
 var message bool
+var watch bool
 
 var startCmd = &cobra.Command{
 	Use:     "start [\"STATE:TIME STATE:TIME ...\"]",
@@ -78,14 +80,37 @@ var statusCmd = &cobra.Command{
 		}
 		var output string
 
-		for _, status := range response.States {
-			output = fmt.Sprintf("State: %v, Time: %v", status.State, status.Time)
-			if status.State == response.Current {
-				output += fmt.Sprintf(" <- Current: %d min %d sec remaining\n", response.Minutes, response.Seconds)
-			} else {
-				output += "\n"
+		if watch {
+			var states []string
+			var current_time string
+			for _, status := range response.States {
+				var actual_state string
+				if status.State == response.Current {
+					porcentaje := 100 - int((float64(response.Minutes)+float64(response.Seconds)/60)/status.Time*100)
+					if response.Seconds < 10 {
+						current_time = fmt.Sprintf("%d:0%d", response.Minutes, response.Seconds)
+					} else {
+						current_time = fmt.Sprintf("%d:%d", response.Minutes, response.Seconds)
+					}
+					actual_state = fmt.Sprintf(" %s %s", status.State, ascii.GenerateProgressBar(porcentaje))
+
+				} else {
+					actual_state = fmt.Sprintf(" %s", status.State)
+				}
+				states = append(states, actual_state)
 			}
-			fmt.Print(output)
+			fmt.Println(ascii.Asciify(current_time, states))
+			fmt.Println()
+		} else {
+			for _, status := range response.States {
+				output = fmt.Sprintf("State: %v, Time: %v", status.State, status.Time)
+				if status.State == response.Current {
+					output += fmt.Sprintf(" <- Current: %d min %d sec remaining\n", response.Minutes, response.Seconds)
+				} else {
+					output += "\n"
+				}
+				fmt.Print(output)
+			}
 		}
 
 	},
@@ -114,6 +139,7 @@ func main() {
 	var rootCmd = &cobra.Command{Use: "pomodoro"}
 	startCmd.Flags().BoolVarP(&sound, "sound", "s", false, "Play a sound when the timer starts")
 	startCmd.Flags().BoolVarP(&message, "disable-message", "d", false, "Disable show a message when the timer starts")
+	statusCmd.Flags().BoolVarP(&watch, "watch", "w", false, "Watch the timer status")
 	rootCmd.AddCommand(startCmd)
 	rootCmd.AddCommand(stopCmd)
 	rootCmd.AddCommand(statusCmd)
