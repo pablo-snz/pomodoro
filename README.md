@@ -7,6 +7,21 @@ pomodoro-daemon is a timer daemon designed for Unix-based systems, allowing you 
 - Sound notification: using [beep](https://github.com/gopxl/beep) you can configure sound notifications to accompany your Pomodoro sessions.
 - Monitor the current Pomodoro timer status and make on-the-fly adjustments to your Pomodoro settings.
 
+- Watch option:
+
+```{bash}
+watch -n 1 pomodoro-daemon status -w
+
+
+
+  ██  ██████      ██  ██  ██████  Have  [==>                ] 10%
+ ███  ██  ██  ██  ██  ██  ██      Fun
+  ██  ██████      ██████  ██████
+  ██      ██  ██      ██  ██  ██
+  ██  ██████          ██  ██████
+
+```
+
 ## Install:
 
 pomodoro-daemon is tailored for Unix-based systems and relies on the presence of notify-send for notifications. Ensure you have Go version 1.21 or higher installed.
